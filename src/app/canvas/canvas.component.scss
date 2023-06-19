@@ -1,0 +1,19 @@
+.container {
+  height: 100vh;
+  padding: 20px;
+  width: 1000px;
+}
+
+.canvas {
+  display: flex;
+  align-items: center;
+
+  .canvas-container {
+    height: 600px;
+    width: 800px;
+    overflow: hidden;
+    background: #eaeaea;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+  }
+}

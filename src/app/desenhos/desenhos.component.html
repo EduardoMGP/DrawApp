@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="title">
+    <h1><a routerLink="/">Home</a> / Canvas</h1>
+    <p>
+      Desperte o artista que há em você! Se inspire com os desenhos de outras pessoas em tempo real.
+    </p>
+  </div>
+
+  <div class="salas">
+    <div class="sala" *ngFor="let sala of salas">
+      <div class="sala__title">
+        <h2>{{ sala }}</h2>
+      </div>
+      <div class="sala__actions">
+        <a routerLink="/canvas/{{ sala }}">Entrar</a>
+      </div>
+    </div>
+  </div>
+</div>

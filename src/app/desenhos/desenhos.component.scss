@@ -1,0 +1,54 @@
+.container {
+  height: 100vh;
+  padding: 20px;
+  width: 1000px;
+}
+
+.salas {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  .sala {
+
+    width: 200px;
+    height: 100px;
+    background: #a4a4a4;
+    margin: 10px;
+    border: 1px solid #b0b0b0;
+    border-radius: 15px;
+    padding: 10px;
+
+    .sala__title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    .sala__actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+
+      a {
+        width: 45%;
+        height: 30px;
+        text-align: center;
+        font-weight: bold;
+        line-height: 30px;
+        border-radius: 5px;
+        border: 1px solid #b0b0b0;
+        background: #fff;
+        cursor: pointer;
+        text-decoration: none;
+        color: #000;
+
+        &:hover {
+          background: #68c8ce;
+          color: #fff;
+        }
+      }
+    }
+  }
+}

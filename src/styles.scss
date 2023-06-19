@@ -1,0 +1,13 @@
+@import "node_modules/bootstrap/scss/bootstrap";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: #2a2828;
+  height: 100vh;
+  color: #cbcbcb;
+}
