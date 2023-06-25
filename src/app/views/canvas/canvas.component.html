@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="title">
+    <h1><a routerLink="/">Home</a> / <a routerLink="/canvas">Canvas</a> / {{sala}}</h1>
+    <p>
+      Desperte o artista que há em você! Se inspire com os desenhos de outras pessoas em tempo real.
+    </p>
+  </div>
+
+  <div class="canvas" #canvas_div>
+
+    <div class="canvas-error" *ngIf="error">
+      <h1>Essa sala não existe ou foi encerrada</h1>
+    </div>
+
+    <div class="canvas-connecting" *ngIf="!error && !connected">
+      <img src="https://i.pinimg.com/originals/b9/4e/10/b94e10c11fd69ab401c0ced375a00d93.gif">
+    </div>
+    <canvas [style]="(!connected || error) ? 'display: none' : ''" class="canvas-container" width="800" height="600" #canvas></canvas>
+  </div>
+</div>

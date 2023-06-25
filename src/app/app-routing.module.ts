@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {GarticComponent} from "./gartic/gartic.component";
-import {DesenharComponent} from "./desenhar/desenhar.component";
-import {DesenhosComponent} from "./desenhos/desenhos.component";
-import {CanvasComponent} from "./canvas/canvas.component";
+import {GarticComponent} from "./views/gartic/gartic.component";
+import {DesenharComponent} from "./views/desenhar/desenhar.component";
+import {DesenhosComponent} from "./views/desenhos/desenhos.component";
+import {CanvasComponent} from "./views/canvas/canvas.component";
 
 const routes: Routes = [
   {

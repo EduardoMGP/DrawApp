@@ -3,16 +3,17 @@
     <h1><a routerLink="/">Home</a> / Desenhar</h1>
     <p>
       Desperte o artista que há em você! Se divirta com o Canvas, desenhando e colorindo o que quiser. <br>
-      Crie desenhos incríveis com o Canvas e permita que seus amigos e familiares vejam suas obras de arte em tempo real.
+      Crie desenhos incríveis com o Canvas e permita que seus amigos e familiares vejam suas obras de arte em tempo
+      real.
     </p>
 
-    <div class="alert alert-info">
+    <div class="alert alert-info" *ngIf="party_name">
       <i class="fas fa-info-circle"></i>
       <strong> Info:</strong> Para que seus amigos e familiares vejam seus desenhos em tempo real,
       basta compartilhar o link da página com eles.
 
       <div class="link-page">
-        <input type="text" value="http://localhost:4200/canvas">
+        <input type="text" value="{{party_url}}">
         <button class="btn btn-primary btn-sm" id="btn-copy">
           <i class="fas fa-copy"></i>
         </button>
@@ -21,7 +22,9 @@
     </div>
   </div>
 
-  <div class="canvas">
+  <div class="canvas disabled" #canvas_div>
+
+
     <div class="toolbar">
       <div class="toolbar__item">
         <a class="toolbar__button" id="btn-undo" (click)="undo()">
@@ -51,17 +54,32 @@
       </div>
 
       <div class="toolbar__item">
-        <div *ngFor="let color of colors" class="color" [style]="'background:' + color" (click)="changeColor(color)">
+        <div *ngFor="let color of colors" class="color" [style]="'background:' + color" (click)="changeColor($event)"
+             [attr.data-color]="color">
 
         </div>
 
         <div class="color-div">
           <label>
-            <input type="text" class="text-input" value="#000000">
-            <input type="color" class="color-input">
+            <input type="text" class="text-input" value="{{currentColor}}" (change)="changeColor($event)">
+            <input type="color" value="{{currentColor}}" class="color-input" (change)="changeColor($event)">
           </label>
         </div>
       </div>
+
+      <div class="toolbar__item">
+        <div *ngFor="let color of colors" class="color fas fa-paint-roller justify-content-center align-content-center"
+             [style]="'background:' + color" (click)="fill($event)" [attr.data-color]="color">
+        </div>
+
+        <div class="color-div">
+          <label>
+            <input type="text" class="text-input" value="{{currentColorBg}}" (change)="fill($event)">
+            <input type="color" value="{{currentColorBg}}" class="color-input" (change)="fill($event)">
+          </label>
+        </div>
+      </div>
+
     </div>
     <canvas class="canvas-container" width="800" height="600" #canvas></canvas>
   </div>

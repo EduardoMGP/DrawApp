@@ -12,8 +12,21 @@
     height: 600px;
     width: 800px;
     overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+  }
+
+  .canvas-connecting, .canvas-error {
+    height: 600px;
+    width: 800px;
+    overflow: hidden;
     background: #eaeaea;
     border: 1px solid #ccc;
     border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

@@ -1,0 +1,222 @@
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {SocketService} from "../../services/socket.service";
+import {ResponseCode} from "../../services/ResponseCode";
+import {Action, History} from "../../models/History";
+
+@Component({
+  selector: 'app-desenhar',
+  templateUrl: './desenhar.component.html',
+  styleUrls: ['./desenhar.component.scss']
+})
+export class DesenharComponent implements AfterViewInit, OnDestroy {
+
+  @ViewChild('canvas', {static: true}) canvasEle: any;
+  @ViewChild('canvas_div', {static: true}) canvasDivEle: any;
+  private ctx: CanvasRenderingContext2D | undefined;
+  public party_name: string | undefined;
+  public party_url: string | undefined;
+
+  public colors: string[] = [
+    '#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00',
+    '#00ffff', '#ff00ff', '#c0c0c0', '#808080', '#800000', '#808000',
+  ];
+
+  public currentColor: string = '#000000';
+  public currentColorBg: string = '#ffffff';
+  private currentSize: number = 5;
+
+  private eraser: boolean = false;
+  private isDrawing: boolean = false;
+  private lastX: number = 0;
+  private lastY: number = 0;
+
+  private lastHistory: History | null = null;
+  private history: History[] = [];
+
+  private undo_list: any[] = [];
+  private redo_list: any[] = [];
+  private undo_limit: number = 10;
+
+  private listener: any;
+
+  constructor() {
+
+    const component = this;
+    this.listener = SocketService.on((event: any) => {
+      console.log(event);
+      if (ResponseCode.PARTY_CREATED === event.code) {
+
+        component.party_name = event.data.partyName;
+        component.party_url = new URL(window.location.href).origin + '/canvas/' + component.party_name;
+
+        let canvas_div = component.canvasDivEle.nativeElement;
+        canvas_div.classList.remove('disabled');
+        let canvas = component.canvasEle.nativeElement;
+        canvas.addEventListener('mouseup', (e: MouseEvent) => {
+          this.stopDrawn()
+        });
+
+        canvas.addEventListener('mousedown', (e: MouseEvent) => {
+          this.lastX = e.offsetX;
+          this.lastY = e.offsetY;
+          this.startDrawn()
+          this.draw(e.offsetX, e.offsetY)
+          console.log(e.offsetX, e.offsetY)
+        });
+
+        canvas.addEventListener('mousemove', (e: MouseEvent) => {
+          const mouseY = e.offsetY;
+          const mouseX = e.offsetX;
+          this.draw(mouseX, mouseY)
+        });
+
+        addEventListener('draw', () => {
+          if (this.party_name) {
+            SocketService.sendDrawn(this.party_name, this.history);
+            this.history = [];
+          }
+        });
+
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.party_name)
+      SocketService.leaveParty(this.party_name);
+    SocketService.removeEvent(this.listener);
+  }
+
+  public ngAfterViewInit() {
+    SocketService.createParty();
+
+    const canvas = this.canvasEle.nativeElement;
+    this.ctx = canvas.getContext('2d');
+    if (this.ctx) {
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fillRect(0, 0, 800, 600);
+    }
+
+  }
+
+  public startDrawn(): void {
+    if (this.ctx) {
+      this.isDrawing = true;
+      this.ctx.strokeStyle = this.currentColor;
+      this.ctx.lineJoin = 'round';
+      this.ctx.lineCap = 'round';
+      this.ctx.lineWidth = this.currentSize;
+
+      if (this.eraser) {
+        this.ctx.strokeStyle = this.currentColorBg;
+        this.ctx.lineWidth = 30;
+      }
+
+      this.lastHistory = {
+        c: this.ctx.strokeStyle,
+        s: this.ctx.lineWidth,
+        a: this.eraser ? Action.ERASER : Action.DRAW,
+        data: []
+      };
+
+    }
+  }
+
+  public stopDrawn(): void {
+    this.isDrawing = false;
+
+    if (this.ctx && this.party_name) {
+      this.undo_list.push(this.ctx?.getImageData(0, 0, 800, 600));
+      if (this.undo_list.length > this.undo_limit) {
+        this.undo_list.shift();
+      }
+
+      if (this.lastHistory !== null) {
+        this.history.push(this.lastHistory);
+        this.lastHistory = null;
+      }
+
+      if (this.history.length > 0)
+        SocketService.sendDrawn(this.party_name, this.history);
+
+      this.history = [];
+    }
+  }
+
+  public addHistory(x: number, y: number, sx: number, sy: number): void {
+    if (this.lastHistory === null) return;
+    this.lastHistory.data.push({x: x, y: y, sx: sx, sy: sy});
+
+    if (this.lastHistory && this.party_name) {
+      if (this.lastHistory.data.length > 5) {
+        SocketService.sendDrawn(this.party_name, [this.lastHistory]);
+        this.lastHistory.data = [];
+      }
+    }
+  }
+
+  private draw(x: number, y: number): void {
+    if (this.ctx) {
+      if (!this.isDrawing) return;
+
+      this.addHistory(x, y, this.lastX, this.lastY);
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.lastX, this.lastY);
+      this.ctx.lineTo(x, y);
+      this.ctx.stroke();
+
+      this.lastX = x;
+      this.lastY = y;
+
+    }
+  }
+
+  public changeColor(color: any): void {
+
+    let element = color.target;
+    let value: string = '';
+    if (element instanceof HTMLInputElement)
+      value = element.value;
+    else if (element instanceof HTMLElement)
+      value = element.getAttribute('data-color') || '';
+
+    if (value !== null) {
+      this.currentColor = value;
+      this.eraser = false;
+    }
+
+  }
+
+  public setEraser(val: boolean): void {
+    this.eraser = val;
+  }
+
+  fill(color: any) {
+    if (this.ctx) {
+      let element = color.target;
+      let value: string = '';
+      if (element instanceof HTMLInputElement)
+        value = element.value;
+      else if (element instanceof HTMLElement)
+        value = element.getAttribute('data-color') || '';
+
+      if (value !== null) {
+        this.currentColorBg = value;
+        this.ctx.fillStyle = value;
+        this.ctx.fillRect(0, 0, 800, 600);
+        if (this.party_name) {
+          SocketService.sendDrawn(this.party_name, [{
+            c: value, a: Action.FILL
+          }]);
+        }
+      }
+    }
+  }
+
+  redo() {
+  }
+
+  undo() {
+  }
+
+}
