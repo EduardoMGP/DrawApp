@@ -228,8 +228,10 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
       let value: string = '';
       if (element instanceof HTMLInputElement)
         value = element.value;
-      else if (element instanceof HTMLElement)
+      else if (element instanceof HTMLElement) {
         value = element.getAttribute('data-color') || '';
+        console.log(value)
+      }
 
       if (value !== null) {
         this.currentColorBg = value;

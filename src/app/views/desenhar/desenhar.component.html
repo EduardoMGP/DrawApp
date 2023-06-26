@@ -59,7 +59,6 @@
           <a class="toolbar__button" id="btn-size" *ngFor="let size of sizes">
             <i class="fas fa-circle" [style]="'font-size:' + size + 'px'" (click)="changeSize($event)"
                [attr.data-size]="size">
-
             </i>
           </a>
         </div>
@@ -68,7 +67,6 @@
       <div class="toolbar__item">
         <div *ngFor="let color of colors" class="color" [style]="'background:' + color" (click)="changeColor($event)"
              [attr.data-color]="color">
-
         </div>
 
         <div class="color-div">
@@ -80,10 +78,10 @@
       </div>
 
       <div class="toolbar__item">
-        <div *ngFor="let color of colors" class="color fas fa-paint-roller justify-content-center align-content-center"
-             [style]="'background:' + color" (click)="fill($event)" [attr.data-color]="color">
-        </div>
-
+        <a class="color-bg" *ngFor="let color of colors" [style]="'background:' + color" (click)="fill($event)">
+          <i class="fas fa-paint-roller color-bg" [attr.data-color]="color">
+          </i>
+        </a>
         <div class="color-div">
           <label>
             <input type="text" class="text-input" value="{{currentColorBg}}" (change)="fill($event)">
