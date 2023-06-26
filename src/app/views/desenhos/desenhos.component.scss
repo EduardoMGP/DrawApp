@@ -1,26 +1,26 @@
-.container {
-  height: 100vh;
-  padding: 20px;
-  width: 1000px;
-}
-
 .salas {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
+  text-align: center;
+  font-family: 'Oswald-Light', sans-serif;
 
   .sala {
 
-    width: 200px;
-    background: #a4a4a4;
+    width: 250px;
+    background: #f4f4f4;
+    box-shadow: 9px 8px 0 0 rgba(130, 94, 191, 0.8);
     margin: 10px;
     border: 1px solid #b0b0b0;
     border-radius: 15px;
-    padding: 10px;
+    overflow: hidden;
 
-    .sala__title {
+    .sala__content {
+      padding: 10px;
+    }
+
+    .sala__title h2 {
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 10px;
       color: #000;
     }
@@ -28,25 +28,11 @@
     .sala__actions {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-top: 10px;
 
-      a {
-        width: 45%;
-        height: 30px;
-        text-align: center;
-        font-weight: bold;
-        line-height: 30px;
-        border-radius: 5px;
-        border: 1px solid #b0b0b0;
-        background: #fff;
-        cursor: pointer;
-        text-decoration: none;
+      span {
         color: #000;
-
-        &:hover {
-          background: #68c8ce;
-          color: #fff;
-        }
       }
     }
   }

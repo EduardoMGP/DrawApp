@@ -8,11 +8,14 @@
 
   <div class="salas">
     <div class="sala" *ngFor="let sala of salas">
-      <div class="sala__title">
-        <h2>{{ sala }}</h2>
-      </div>
-      <div class="sala__actions">
-        <a routerLink="/canvas/{{ sala }}">Entrar</a>
+      <div class="sala__content">
+        <div class="sala__title">
+          <h2 class="d-flex justify-content-between"><i class="fa-solid fa-paintbrush"></i> {{ sala.name }}</h2>
+        </div>
+        <div class="sala__actions">
+          <span><i class="fas fa-users"></i> {{ sala.peoples }}</span>
+          <a routerLink="/canvas/{{ sala.name }}" class="btn btn-success">Entrar</a>
+        </div>
       </div>
     </div>
   </div>

@@ -260,4 +260,12 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
       }
     }
   }
+
+  copy(party_url: string | undefined) {
+    if (party_url) {
+      navigator.clipboard.writeText(party_url).then(() => {
+        alert('Link copiado com sucesso!');
+      });
+    }
+  }
 }
