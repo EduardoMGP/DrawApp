@@ -102,6 +102,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.sala)
+      SocketService.leaveParty(this.sala);
     SocketService.removeEvent(this.listener);
   }
 
