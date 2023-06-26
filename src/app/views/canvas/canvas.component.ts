@@ -16,6 +16,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   public sala: string | null = null;
   public connected: boolean = false;
   public error: boolean = false;
+  public connectedPeoples: number = 0;
 
   private ctx: CanvasRenderingContext2D | undefined;
   private canvas = new Map<number, String>();
@@ -30,6 +31,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
         case ResponseCode.PARTY_CLOSED: {
           component.error = true;
+          this.connectedPeoples = 0;
           break;
         }
 
@@ -41,11 +43,20 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         case ResponseCode.PARTY_CONNECTED: {
           component.connected = true;
           this.draw(event.data.chunk);
+          this.connectedPeoples = event.data.peoples;
           break;
         }
 
         case ResponseCode.DRAWING_RECEIVED: {
           this.draw(event.data.chunk);
+          this.connectedPeoples = event.data.peoples;
+          break
+        }
+
+        case ResponseCode.PARTY_CLIENT_JOINED:
+        case ResponseCode.PARTY_CLIENT_LEFT: {
+          this.connectedPeoples = event.data.peoples;
+          break;
         }
       }
     });
@@ -89,6 +100,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
     }
   }
+
   ngOnDestroy(): void {
     SocketService.removeEvent(this.listener);
   }

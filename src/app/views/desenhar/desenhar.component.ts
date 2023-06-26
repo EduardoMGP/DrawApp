@@ -25,6 +25,7 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
 
   public sizes: number[] = [5, 10, 15, 20, 30, 40];
 
+  public connectedPeoples: number = 0;
   public currentColor: string = '#000000';
   public currentColorBg: string = '#ffffff';
   private currentSize: number = 5;
@@ -47,6 +48,13 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
     const component = this;
     this.listener = SocketService.on((event: any) => {
       console.log(event);
+
+      if (ResponseCode.DRAWN === event.code ||
+        ResponseCode.PARTY_CLIENT_JOINED === event.code ||
+        ResponseCode.PARTY_CLIENT_LEFT === event.code) {
+        this.connectedPeoples = event.data.peoples;
+      }
+
       if (ResponseCode.PARTY_CREATED === event.code) {
 
         component.party_name = event.data.partyName;
