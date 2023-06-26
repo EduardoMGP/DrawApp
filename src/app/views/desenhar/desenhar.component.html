@@ -51,6 +51,15 @@
         <a class="toolbar__button" id="btn-eraser" (click)="setEraser(true)">
           <i class="fas fa-eraser"></i>
         </a>
+
+        <div class="size-div">
+          <a class="toolbar__button" id="btn-size" *ngFor="let size of sizes">
+            <i class="fas fa-circle" [style]="'font-size:' + size + 'px'" (click)="changeSize($event)"
+               [attr.data-size]="size">
+
+            </i>
+          </a>
+        </div>
       </div>
 
       <div class="toolbar__item">
@@ -82,6 +91,7 @@
 
     </div>
     <canvas class="canvas-container" width="800" height="600" #canvas></canvas>
+    <div class="mouse-follow" #cursor></div>
   </div>
 
 </div>

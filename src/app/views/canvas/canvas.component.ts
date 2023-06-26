@@ -40,55 +40,55 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
         case ResponseCode.PARTY_CONNECTED: {
           component.connected = true;
+          this.draw(event.data.chunk);
           break;
         }
 
         case ResponseCode.DRAWING_RECEIVED: {
-
-          if (this.ctx == undefined) return;
-
-          let chunks: History[] = event.data.chunk;
-          if (chunks.length > 0) {
-            for (let chunk of chunks) {
-
-              let action: Action = chunk.a;
-              let color = chunk.c;
-              let size = chunk.s;
-              let data: Coord[] = chunk.data;
-
-              switch (action) {
-
-                case Action.DRAW:
-                case Action.ERASER: {
-                  for (let coord of data) {
-
-                    this.ctx.beginPath();
-                    this.ctx.strokeStyle = color;
-                    this.ctx.lineWidth = size;
-                    this.ctx.lineJoin = 'round';
-                    this.ctx.lineCap = 'round';
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(coord.sx, coord.sy);
-                    this.ctx.lineTo(coord.x, coord.y);
-                    this.ctx.stroke();
-
-                  }
-                  break;
-                }
-
-                case Action.FILL: {
-                  this.ctx.fillStyle = color;
-                  this.ctx.fillRect(0, 0, 800, 600);
-                }
-
-              }
-            }
-          }
+          this.draw(event.data.chunk);
         }
       }
     });
   }
 
+  private draw(history: History[]) {
+    if (history.length > 0 && this.ctx != undefined) {
+      for (let chunk of history) {
+
+        let action: Action = chunk.a;
+        let color = chunk.c;
+        let size = chunk.s;
+        let data: Coord[] = chunk.data;
+
+        switch (action) {
+
+          case Action.DRAW:
+          case Action.ERASER: {
+            for (let coord of data) {
+
+              this.ctx.beginPath();
+              this.ctx.strokeStyle = color;
+              this.ctx.lineWidth = size;
+              this.ctx.lineJoin = 'round';
+              this.ctx.lineCap = 'round';
+              this.ctx.beginPath();
+              this.ctx.moveTo(coord.sx, coord.sy);
+              this.ctx.lineTo(coord.x, coord.y);
+              this.ctx.stroke();
+
+            }
+            break;
+          }
+
+          case Action.FILL: {
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(0, 0, 800, 600);
+          }
+
+        }
+      }
+    }
+  }
   ngOnDestroy(): void {
     SocketService.removeEvent(this.listener);
   }

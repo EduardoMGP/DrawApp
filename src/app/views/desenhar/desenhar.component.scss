@@ -38,10 +38,29 @@
   z-index: 1;
 }
 
+.mouse-follow {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  outline: 1px solid #000;
+  border-radius: 50%;
+  z-index: 999;
+  pointer-events: none;
+  display: none;
+}
+
+//.mouse-follow::after {
+//  content: "";
+//  position: absolute;
+//  width: 20px;
+//  height: 20px;
+//  background-color: blue;
+//  border-radius: 50%;
+//  transform: translate(-50%, -50%);
+//}
 .canvas {
   display: flex;
   align-items: center;
-
+  cursor: crosshair;
   .alert {
     display: none;
   }
@@ -51,6 +70,7 @@
     width: 200px;
     border: 1px solid #b0b0b0;
     border-radius: 15px 0 0 15px;
+    overflow-y: scroll;
 
     .toolbar__item {
       padding: 10px;

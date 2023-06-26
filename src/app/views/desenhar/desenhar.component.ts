@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, Renderer2, ViewChild} from '@angular/core';
 import {SocketService} from "../../services/socket.service";
 import {ResponseCode} from "../../services/ResponseCode";
 import {Action, History} from "../../models/History";
@@ -12,6 +12,8 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('canvas', {static: true}) canvasEle: any;
   @ViewChild('canvas_div', {static: true}) canvasDivEle: any;
+  @ViewChild('cursor', {static: true}) cursorEle: any;
+  private cursorElement: HTMLDivElement | undefined
   private ctx: CanvasRenderingContext2D | undefined;
   public party_name: string | undefined;
   public party_url: string | undefined;
@@ -21,10 +23,11 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
     '#00ffff', '#ff00ff', '#c0c0c0', '#808080', '#800000', '#808000',
   ];
 
+  public sizes: number[] = [5, 10, 15, 20, 30, 40];
+
   public currentColor: string = '#000000';
   public currentColorBg: string = '#ffffff';
   private currentSize: number = 5;
-
   private eraser: boolean = false;
   private isDrawing: boolean = false;
   private lastX: number = 0;
@@ -39,7 +42,7 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
 
   private listener: any;
 
-  constructor() {
+  constructor(private renderer: Renderer2) {
 
     const component = this;
     this.listener = SocketService.on((event: any) => {
@@ -68,6 +71,25 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
           const mouseY = e.offsetY;
           const mouseX = e.offsetX;
           this.draw(mouseX, mouseY)
+
+          this.renderer.setStyle(component.cursorElement, 'width', this.currentSize + 'px');
+          this.renderer.setStyle(component.cursorElement, 'height', this.currentSize + 'px');
+          this.renderer.setStyle(component.cursorElement, 'left', (e.pageX - this.currentSize / 2) + 'px');
+          this.renderer.setStyle(component.cursorElement, 'top', (e.pageY - this.currentSize / 2) + 'px');
+          this.renderer.setStyle(component.cursorElement, 'background-color', 'rgba(255, 255, 255, 0.5)');
+
+          if (!this.eraser) {
+            this.renderer.setStyle(component.cursorElement, 'background-color', this.currentColor);
+          }
+
+        });
+
+        canvas.addEventListener('mouseout', (e: MouseEvent) => {
+          this.renderer.setStyle(component.cursorElement, 'display', 'none');
+        });
+
+        canvas.addEventListener('mouseover', (e: MouseEvent) => {
+          this.renderer.setStyle(component.cursorElement, 'display', 'block');
         });
 
         addEventListener('draw', () => {
@@ -90,6 +112,7 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit() {
     SocketService.createParty();
 
+    this.cursorElement = this.cursorEle.nativeElement;
     const canvas = this.canvasEle.nativeElement;
     this.ctx = canvas.getContext('2d');
     if (this.ctx) {
@@ -219,4 +242,12 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
   undo() {
   }
 
+  changeSize($event: MouseEvent) {
+    if (this.ctx) {
+      let element = $event.target;
+      if (element instanceof HTMLElement) {
+        this.currentSize = parseInt(element.getAttribute('data-size') || '1');
+      }
+    }
+  }
 }
