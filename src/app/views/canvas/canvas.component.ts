@@ -42,7 +42,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
         case ResponseCode.PARTY_CONNECTED: {
           component.connected = true;
-          this.draw(event.data.chunk);
           this.connectedPeoples = event.data.peoples;
           break;
         }

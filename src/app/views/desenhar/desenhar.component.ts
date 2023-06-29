@@ -37,7 +37,7 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
 
   private undo_list: any[] = [];
   private redo_list: any[] = [];
-  private undo_limit: number = 10;
+  private undo_limit: number = 50;
 
   private listener: any;
 
@@ -138,7 +138,6 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
 
       if (this.eraser) {
         this.ctx.strokeStyle = this.currentColorBg;
-        this.ctx.lineWidth = 30;
       }
 
       this.lastHistory = {
@@ -148,6 +147,11 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
         data: []
       };
 
+      this.undo_list.push(this.ctx.getImageData(0, 0, 800, 600));
+      if (this.undo_list.length > this.undo_limit) {
+        this.undo_list.shift();
+      }
+
     }
   }
 
@@ -155,10 +159,6 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
     this.isDrawing = false;
 
     if (this.ctx && this.party_name) {
-      this.undo_list.push(this.ctx?.getImageData(0, 0, 800, 600));
-      if (this.undo_list.length > this.undo_limit) {
-        this.undo_list.shift();
-      }
 
       if (this.lastHistory !== null) {
         this.history.push(this.lastHistory);
@@ -234,6 +234,7 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
       if (value !== null) {
         this.currentColorBg = value;
         this.ctx.fillStyle = value;
+        this.undo_list.push(this.ctx.getImageData(0, 0, 800, 600));
         this.ctx.fillRect(0, 0, 800, 600);
         if (this.party_name) {
           SocketService.sendDrawn(this.party_name, [{
@@ -245,9 +246,24 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
   }
 
   redo() {
+    if (this.ctx) {
+      if (this.redo_list.length > 0) {
+        console.log(this.redo_list)
+        let redo = this.redo_list.pop();
+        this.undo_list.push(this.ctx.getImageData(0, 0, 800, 600));
+        this.ctx.putImageData(redo as ImageData, 0, 0);
+      }
+    }
   }
 
   undo() {
+    if (this.ctx) {
+      if (this.undo_list.length > 0) {
+        let undo = this.undo_list.pop();
+        this.redo_list.push(this.ctx.getImageData(0, 0, 800, 600));
+        this.ctx.putImageData(undo as ImageData, 0, 0);
+      }
+    }
   }
 
   changeSize($event: any) {

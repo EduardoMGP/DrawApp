@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {ResponseCode} from "./ResponseCode";
-
 @Injectable({
   providedIn: 'root'
 })
@@ -13,20 +12,28 @@ export class SocketService {
 
   public static connect() {
 
-    SocketService.socket = new WebSocket('wss://'+window.location.hostname+':8086')
-    console.log("Iniciando conexão")
-    SocketService.socket.addEventListener('open', function (event) {
-      console.log('Conexão WebSocket aberta:', event);
-    });
+    if (window.location.protocol === "http:") {
+      SocketService.socket = new WebSocket('ws://' + window.location.hostname + ':8086')
+    } else if (window.location.protocol === "https:") {
+      SocketService.socket = new WebSocket('ws://' + window.location.hostname + ':8086')
+    }
 
-    SocketService.socket.addEventListener('message', function (event) {
-      dispatchEvent(new CustomEvent("onMessage", {detail: event.data}));
-    });
+    if (SocketService.socket) {
+      console.log("Iniciando conexão")
+      SocketService.socket.addEventListener('open', function (event) {
+        console.log('Conexão WebSocket aberta:', event);
+      });
 
-    SocketService.socket.addEventListener('error', function (event) {
-      console.error('Erro na conexão WebSocket:', event);
-      SocketService.connect();
-    });
+      SocketService.socket.addEventListener('message', function (event) {
+        dispatchEvent(new CustomEvent("onMessage", {detail: event.data}));
+      });
+
+      SocketService.socket.addEventListener('error', function (event) {
+        console.error('Erro na conexão WebSocket:', event);
+        SocketService.connect();
+      });
+    }
+
   }
 
   static removeEvent(event: any) {
@@ -88,25 +95,6 @@ export class SocketService {
         }
       });
 
-    // SocketService.chunk_block++;
-    // const chunkSize = 8000; // Tamanho do chunk em bytes
-    // const totalChunks = Math.ceil(history.length / chunkSize);
-    // console.log("Total de chunks: " + totalChunks)
-    // for (let i = 0; i < totalChunks; i++) {
-    //   const start = i * chunkSize;
-    //   const end = ((i + 1) * chunkSize);
-    //   const chunk = history.slice(start, end);
-    //   SocketService.send({
-    //     action: 'DRAWING',
-    //     data: {
-    //       'partyName': party_name,
-    //       'chunk': chunk,
-    //       'chunkBlock': SocketService.chunk_block,
-    //       'chunkNumber': i,
-    //       'totalChunks': totalChunks
-    //     }
-    //   });
-    // }
   }
 
   static leaveParty(party_name: string) {
