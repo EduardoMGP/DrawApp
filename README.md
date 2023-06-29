@@ -1,5 +1,6 @@
 
-# Título do Projeto
+# Draw App
+#### Uma aplicação Web simples para exemplo de utilização de Websockets 
 
 Esse é um projeto web simples desenvolvido em Angular que permite a criação de desenhos em tempo real onde você pode se conectar a salas virtuais, desenhar e ver as alterações acontecendo instantaneamente.
 Uma versão hospedada desse projeto pode ser visualizada no link
