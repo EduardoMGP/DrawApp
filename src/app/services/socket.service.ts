@@ -15,7 +15,7 @@ export class SocketService {
     if (window.location.protocol === "http:") {
       SocketService.socket = new WebSocket('ws://' + window.location.hostname + ':8086')
     } else if (window.location.protocol === "https:") {
-      SocketService.socket = new WebSocket('ws://' + window.location.hostname + ':8086')
+      SocketService.socket = new WebSocket('wss://' + window.location.hostname + ':8086')
     }
 
     if (SocketService.socket) {
