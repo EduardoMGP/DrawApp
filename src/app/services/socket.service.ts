@@ -13,7 +13,7 @@ export class SocketService {
 
   public static connect() {
 
-    SocketService.socket = new WebSocket('ws://'+window.location.hostname+':8086')
+    SocketService.socket = new WebSocket('wss://'+window.location.hostname+':8086')
     console.log("Iniciando conexão")
     SocketService.socket.addEventListener('open', function (event) {
       console.log('Conexão WebSocket aberta:', event);

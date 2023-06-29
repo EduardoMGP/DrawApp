@@ -23,12 +23,10 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
     '#00ffff', '#ff00ff', '#c0c0c0', '#808080', '#800000', '#808000',
   ];
 
-  public sizes: number[] = [5, 10, 15, 20, 30, 40];
-
   public connectedPeoples: number = 0;
   public currentColor: string = '#000000';
   public currentColorBg: string = '#ffffff';
-  private currentSize: number = 5;
+  public currentSize: number = 5;
   private eraser: boolean = false;
   private isDrawing: boolean = false;
   private lastX: number = 0;
@@ -252,11 +250,11 @@ export class DesenharComponent implements AfterViewInit, OnDestroy {
   undo() {
   }
 
-  changeSize($event: MouseEvent) {
+  changeSize($event: any) {
     if (this.ctx) {
       let element = $event.target;
-      if (element instanceof HTMLElement) {
-        this.currentSize = parseInt(element.getAttribute('data-size') || '1');
+      if (element instanceof HTMLInputElement) {
+        this.currentSize = parseInt(element.value);
       }
     }
   }

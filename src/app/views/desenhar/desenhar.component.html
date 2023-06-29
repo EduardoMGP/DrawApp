@@ -43,15 +43,6 @@
       </div>
 
       <div class="toolbar__item">
-        <a class="toolbar__button" id="btn-clear" (click)="fill('#fff')">
-          <i class="fas fa-trash"></i>
-        </a>
-        <a class="toolbar__button" id="btn-download">
-          <i class="fas fa-download"></i>
-        </a>
-      </div>
-
-      <div class="toolbar__item">
         <a class="toolbar__button" id="btn-pencil" (click)="setEraser(false)">
           <i class="fas fa-pencil-alt"></i>
         </a>
@@ -60,11 +51,7 @@
         </a>
 
         <div class="size-div">
-          <a class="toolbar__button" id="btn-size" *ngFor="let size of sizes">
-            <i class="fas fa-circle" [style]="'font-size:' + size + 'px'" (click)="changeSize($event)"
-               [attr.data-size]="size">
-            </i>
-          </a>
+          <input type="range" max="100" min="3" (change)="changeSize($event)" value="{{currentSize}}">
         </div>
       </div>
 
@@ -76,7 +63,7 @@
         <div class="color-div">
           <label>
             <input type="text" class="text-input" value="{{currentColor}}" (change)="changeColor($event)">
-            <input type="color" value="{{currentColor}}" class="color-input" (change)="changeColor($event)">
+            <input type="color" value="{{currentColor}}" class="color-input" (input)="changeColor($event)">
           </label>
         </div>
       </div>
